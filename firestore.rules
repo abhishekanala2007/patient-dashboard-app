@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // User profile permissions
+    match /users/{userId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Public Hospital Directory
+    match /hospitals/{hospitalId} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.uid == hospitalId;
+    }
+
+    // Appointment Rules
+    match /appointments/{appointmentId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth != null &&
+        (resource.data.patientId == request.auth.uid || resource.data.hospitalId == request.auth.uid);
+    }
+
+    // Medical Records Rules
+    match /medical_records/{recordId} {
+      allow read, write: if request.auth != null &&
+        (resource.data.patientId == request.auth.uid || resource.data.hospitalId == request.auth.uid);
+    }
+  }
+}
