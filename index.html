@@ -32,16 +32,15 @@
 
         .app {
             display: flex;
-            height: 100vh;
-            max-height: 100vh;
+            min-height: 100vh;
         }
 
         /* Screens */
         .screen {
             display: none;
             width: 100%;
-            height: 100%;
             animation: slideIn 0.3s ease-in-out;
+            flex: 1;
         }
 
         .screen.active {
@@ -88,6 +87,43 @@
             color: #666;
             margin-bottom: 30px;
             font-size: 14px;
+        }
+
+        .demo-credentials {
+            background: #e3f2fd;
+            border: 1px solid #1a73e8;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .demo-credentials strong {
+            color: #1a73e8;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .demo-credentials p {
+            color: #333;
+            margin: 4px 0;
+        }
+
+        .demo-credentials .copy-btn {
+            background: #1a73e8;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 8px;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .demo-credentials .copy-btn:hover {
+            background: #1557b0;
         }
 
         .form-group {
@@ -149,6 +185,16 @@
             background: #45a049;
         }
 
+        .btn-demo {
+            background: #ff9800;
+            color: white;
+            margin-bottom: 12px;
+        }
+
+        .btn-demo:hover {
+            background: #e68900;
+        }
+
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -177,6 +223,7 @@
             flex-direction: column;
             background: #f5f5f5;
             overflow-y: auto;
+            max-height: 100vh;
         }
 
         .header {
@@ -413,6 +460,15 @@
                 <div class="auth-form">
                     <h1>Patient Dashboard</h1>
                     <p class="subtitle">Login to Your Account</p>
+                    
+                    <!-- Demo Credentials Box -->
+                    <div class="demo-credentials">
+                        <strong>🎯 Demo Account:</strong>
+                        <p><strong>Email:</strong> demo@patient.com</p>
+                        <p><strong>Password:</strong> demo123</p>
+                        <button class="copy-btn" onclick="autofillDemo()">🚀 Auto-Fill Demo</button>
+                    </div>
+
                     <div id="loginAlert"></div>
                     <form id="loginForm" onsubmit="handleLogin(event)">
                         <div class="form-group">
@@ -551,6 +607,31 @@
     </div>
 
     <script>
+        // Initialize demo account
+        function initializeDemoAccount() {
+            let users = JSON.parse(localStorage.getItem('users')) || {};
+            
+            // Add demo account if it doesn't exist
+            if (!users['demo@patient.com']) {
+                users['demo@patient.com'] = {
+                    name: 'Demo Patient',
+                    email: 'demo@patient.com',
+                    password: 'demo123',
+                    age: 30,
+                    phone: '+1 (555) 123-4567',
+                    id: 1
+                };
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+        }
+
+        // Auto-fill demo credentials
+        function autofillDemo() {
+            document.getElementById('loginEmail').value = 'demo@patient.com';
+            document.getElementById('loginPassword').value = 'demo123';
+            showAlert('loginAlert', '✓ Demo credentials filled. Click Login!', 'info');
+        }
+
         // Mock User Database (In-memory)
         let users = JSON.parse(localStorage.getItem('users')) || {};
         let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
@@ -601,10 +682,10 @@
             if (users[email] && users[email].password === password) {
                 currentUser = users[email];
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                showAlert('loginAlert', 'Login successful!', 'success');
+                showAlert('loginAlert', '✓ Login successful!', 'success');
                 setTimeout(() => showDashboard(), 1000);
             } else {
-                showAlert('loginAlert', 'Invalid email or password', 'error');
+                showAlert('loginAlert', '❌ Invalid email or password', 'error');
             }
         }
 
@@ -618,13 +699,13 @@
             const phone = document.getElementById('registerPhone').value;
 
             if (users[email]) {
-                showAlert('registerAlert', 'Email already registered', 'error');
+                showAlert('registerAlert', '❌ Email already registered', 'error');
                 return;
             }
 
             users[email] = { name, email, password, age, phone, id: Date.now() };
             localStorage.setItem('users', JSON.stringify(users));
-            showAlert('registerAlert', 'Registration successful! Please login.', 'success');
+            showAlert('registerAlert', '✓ Registration successful! Please login.', 'success');
             setTimeout(() => showLogin(), 1500);
         }
 
@@ -675,7 +756,7 @@
             appointments.push(appointment);
             localStorage.setItem('appointments', JSON.stringify(appointments));
             
-            showAlert('bookAppointmentModal', 'Appointment booked successfully! Hospital will confirm soon.', 'success');
+            showAlert('bookAppointmentModal', '✓ Appointment booked successfully! Hospital will confirm soon.', 'success');
             document.getElementById('bookAppointmentForm').reset();
             setTimeout(() => {
                 closeModal('bookAppointmentModal');
@@ -706,6 +787,7 @@
 
         // Check if user is logged in on page load
         window.addEventListener('load', () => {
+            initializeDemoAccount();
             if (currentUser) {
                 showDashboard();
             } else {
