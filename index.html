@@ -91,8 +91,8 @@
 
         .demo-credentials {
             background: #e3f2fd;
-            border: 1px solid #1a73e8;
-            padding: 12px;
+            border: 2px solid #1a73e8;
+            padding: 15px;
             border-radius: 6px;
             margin-bottom: 20px;
             font-size: 13px;
@@ -101,23 +101,25 @@
         .demo-credentials strong {
             color: #1a73e8;
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
 
         .demo-credentials p {
             color: #333;
-            margin: 4px 0;
+            margin: 6px 0;
+            font-size: 14px;
         }
 
         .demo-credentials .copy-btn {
             background: #1a73e8;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 8px 12px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 12px;
-            margin-top: 8px;
+            font-size: 13px;
+            margin-top: 10px;
             width: 100%;
             font-weight: 600;
         }
@@ -183,16 +185,6 @@
 
         .btn-secondary:hover {
             background: #45a049;
-        }
-
-        .btn-demo {
-            background: #ff9800;
-            color: white;
-            margin-bottom: 12px;
-        }
-
-        .btn-demo:hover {
-            background: #e68900;
         }
 
         .btn:disabled {
@@ -463,10 +455,10 @@
                     
                     <!-- Demo Credentials Box -->
                     <div class="demo-credentials">
-                        <strong>🎯 Demo Account:</strong>
+                        <strong>🎯 Demo Account</strong>
                         <p><strong>Email:</strong> demo@patient.com</p>
                         <p><strong>Password:</strong> demo123</p>
-                        <button class="copy-btn" onclick="autofillDemo()">🚀 Auto-Fill Demo</button>
+                        <button type="button" class="copy-btn" onclick="autofillDemo()">🚀 Auto-Fill Demo</button>
                     </div>
 
                     <div id="loginAlert"></div>
@@ -607,11 +599,18 @@
     </div>
 
     <script>
-        // Initialize demo account
-        function initializeDemoAccount() {
-            let users = JSON.parse(localStorage.getItem('users')) || {};
-            
-            // Add demo account if it doesn't exist
+        // Global Variables
+        let users = {};
+        let currentUser = null;
+        let appointments = [];
+
+        // Initialize App
+        function initializeApp() {
+            // Load from localStorage
+            let storedUsers = localStorage.getItem('users');
+            users = storedUsers ? JSON.parse(storedUsers) : {};
+
+            // Ensure demo account exists
             if (!users['demo@patient.com']) {
                 users['demo@patient.com'] = {
                     name: 'Demo Patient',
@@ -622,6 +621,20 @@
                     id: 1
                 };
                 localStorage.setItem('users', JSON.stringify(users));
+                console.log('✓ Demo account initialized');
+            }
+
+            // Load appointments
+            let storedAppointments = localStorage.getItem('appointments');
+            appointments = storedAppointments ? JSON.parse(storedAppointments) : [];
+
+            // Check if user is logged in
+            let storedUser = localStorage.getItem('currentUser');
+            if (storedUser) {
+                currentUser = JSON.parse(storedUser);
+                showDashboard();
+            } else {
+                showLogin();
             }
         }
 
@@ -631,12 +644,6 @@
             document.getElementById('loginPassword').value = 'demo123';
             showAlert('loginAlert', '✓ Demo credentials filled. Click Login!', 'info');
         }
-
-        // Mock User Database (In-memory)
-        let users = JSON.parse(localStorage.getItem('users')) || {};
-        let currentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
-        let appointments = JSON.parse(localStorage.getItem('appointments')) || [];
-        let medicalRecords = JSON.parse(localStorage.getItem('medicalRecords')) || [];
 
         // Show/Hide Screens
         function showScreen(screenClass) {
@@ -667,24 +674,31 @@
         // Alert Helper
         function showAlert(elementId, message, type = 'info') {
             const alertDiv = document.getElementById(elementId);
-            alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-            setTimeout(() => {
-                alertDiv.innerHTML = '';
-            }, 5000);
+            if (alertDiv) {
+                alertDiv.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                setTimeout(() => {
+                    alertDiv.innerHTML = '';
+                }, 5000);
+            }
         }
 
         // Handle Login
-        async function handleLogin(event) {
+        function handleLogin(event) {
             event.preventDefault();
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
 
+            console.log('Login attempt:', email);
+            console.log('Available users:', Object.keys(users));
+
             if (users[email] && users[email].password === password) {
                 currentUser = users[email];
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                console.log('✓ Login successful:', currentUser.name);
                 showAlert('loginAlert', '✓ Login successful!', 'success');
                 setTimeout(() => showDashboard(), 1000);
             } else {
+                console.log('❌ Login failed - invalid credentials');
                 showAlert('loginAlert', '❌ Invalid email or password', 'error');
             }
         }
@@ -756,7 +770,7 @@
             appointments.push(appointment);
             localStorage.setItem('appointments', JSON.stringify(appointments));
             
-            showAlert('bookAppointmentModal', '✓ Appointment booked successfully! Hospital will confirm soon.', 'success');
+            showAlert('bookAppointmentModal', '✓ Appointment booked successfully!', 'success');
             document.getElementById('bookAppointmentForm').reset();
             setTimeout(() => {
                 closeModal('bookAppointmentModal');
@@ -785,16 +799,6 @@
             `).join('');
         }
 
-        // Check if user is logged in on page load
-        window.addEventListener('load', () => {
-            initializeDemoAccount();
-            if (currentUser) {
-                showDashboard();
-            } else {
-                showLogin();
-            }
-        });
-
         // Close modal when clicking outside
         window.onclick = function(event) {
             const modal = event.target;
@@ -802,6 +806,9 @@
                 modal.classList.remove('active');
             }
         }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
