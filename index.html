@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Patient Dashboard - Healthcare App</title>
+    <title>Healthcare Management System</title>
     <style>
         * {
             margin: 0;
@@ -58,8 +58,70 @@
             }
         }
 
-        .login-screen,
-        .register-screen {
+        /* Role Selection Screen */
+        .role-selection-screen {
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .role-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .role-container h1 {
+            color: #1a73e8;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .role-container .subtitle {
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 16px;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .role-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .role-card h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .role-card p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* Login Screen */
+        .login-screen {
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -105,7 +167,7 @@
         .demo-box p {
             color: #333;
             margin: 5px 0;
-            font-size: 14px;
+            font-size: 13px;
             font-family: 'Courier New', monospace;
             background: #fffacd;
             padding: 5px;
@@ -184,10 +246,20 @@
             background: #45a049;
         }
 
+        .btn-back {
+            background: #666;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #555;
+        }
+
         .auth-link {
             text-align: center;
             color: #666;
             font-size: 14px;
+            margin-top: 15px;
         }
 
         .auth-link a {
@@ -220,12 +292,7 @@
             border: 1px solid #f5c6cb;
         }
 
-        .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-
+        /* Dashboard Screens */
         .dashboard-screen {
             flex-direction: column;
             background: #f5f5f5;
@@ -272,21 +339,6 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
-        .hospital-card {
-            border-left: 4px solid #1a73e8;
-        }
-
-        .hospital-card h2 {
-            color: #1a73e8;
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-
-        .hospital-card p {
-            color: #666;
-            margin-bottom: 8px;
-        }
-
         .action-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -318,20 +370,20 @@
             margin-bottom: 15px;
         }
 
-        .appointment-card {
+        .info-card {
             background: white;
             padding: 15px;
             border-radius: 8px;
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #1a73e8;
             margin-bottom: 10px;
         }
 
-        .appointment-card h3 {
+        .info-card h3 {
             color: #333;
             margin-bottom: 8px;
         }
 
-        .appointment-card p {
+        .info-card p {
             color: #666;
             font-size: 14px;
             margin-bottom: 5px;
@@ -391,6 +443,9 @@
         }
 
         @media (max-width: 768px) {
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
             .auth-form {
                 padding: 30px 20px;
             }
@@ -403,101 +458,144 @@
 <body>
     <div class="container">
         <div class="app">
-            <!-- Login Screen -->
-            <div class="screen login-screen active">
+            <!-- Role Selection Screen -->
+            <div class="screen role-selection-screen active">
+                <div class="role-container">
+                    <h1>Healthcare Management System</h1>
+                    <p class="subtitle">Choose Your Role to Continue</p>
+                    
+                    <div class="role-grid">
+                        <div class="role-card" onclick="selectRole('patient')">
+                            <h2>👤 Patient</h2>
+                            <p>Manage appointments and medical records</p>
+                        </div>
+                        <div class="role-card" onclick="selectRole('staff')">
+                            <h2>👨‍⚕️ Hospital Staff</h2>
+                            <p>Manage patient records and appointments</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient Login Screen -->
+            <div class="screen login-screen" id="patientLogin">
                 <div class="auth-form">
-                    <h1>Patient Dashboard</h1>
-                    <p class="subtitle">Login to Your Account</p>
+                    <h1>Patient Login</h1>
+                    <p class="subtitle">Access Your Medical Records</p>
                     
                     <div class="demo-box">
-                        <h3>🎯 DEMO ACCOUNT</h3>
-                        <p><strong>Email:</strong><br>demo@patient.com</p>
-                        <p><strong>Password:</strong><br>demo123</p>
-                        <button type="button" class="copy-btn" onclick="quickLogin()">🚀 Quick Login with Demo</button>
+                        <h3>🎯 DEMO - PATIENT</h3>
+                        <p><strong>Email:</strong> patient@demo.com</p>
+                        <p><strong>Password:</strong> patient123</p>
+                        <button type="button" class="copy-btn" onclick="quickLoginPatient()">🚀 Quick Login</button>
                     </div>
 
-                    <div id="loginAlert"></div>
+                    <div id="patientLoginAlert"></div>
                     
-                    <form id="loginForm" onsubmit="handleLogin(event)">
+                    <form id="patientLoginForm" onsubmit="handlePatientLogin(event)">
                         <div class="form-group">
                             <label>Email Address</label>
-                            <input type="text" id="loginEmail" placeholder="demo@patient.com">
+                            <input type="text" id="patientEmail" placeholder="patient@demo.com">
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" id="loginPassword" placeholder="demo123">
+                            <input type="password" id="patientPassword" placeholder="patient123">
                         </div>
                         <button type="submit" class="btn btn-primary">Login</button>
                     </form>
                     
                     <div class="auth-link">
-                        Don't have an account? <a onclick="showRegister()">Register</a>
+                        <a onclick="showRoleSelection()">← Back to Role Selection</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Register Screen -->
-            <div class="screen register-screen">
+            <!-- Hospital Staff Login Screen -->
+            <div class="screen login-screen" id="staffLogin">
                 <div class="auth-form">
-                    <h1>Create Account</h1>
-                    <p class="subtitle">Register as a Patient</p>
-                    <div id="registerAlert"></div>
-                    <form id="registerForm" onsubmit="handleRegister(event)">
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" id="registerName" required>
-                        </div>
+                    <h1>Hospital Staff Login</h1>
+                    <p class="subtitle">Manage Patient Care</p>
+                    
+                    <div class="demo-box">
+                        <h3>🎯 DEMO - STAFF</h3>
+                        <p><strong>Email:</strong> staff@hospital.com</p>
+                        <p><strong>Password:</strong> staff123</p>
+                        <button type="button" class="copy-btn" onclick="quickLoginStaff()">🚀 Quick Login</button>
+                    </div>
+
+                    <div id="staffLoginAlert"></div>
+                    
+                    <form id="staffLoginForm" onsubmit="handleStaffLogin(event)">
                         <div class="form-group">
                             <label>Email Address</label>
-                            <input type="text" id="registerEmail" required>
+                            <input type="text" id="staffEmail" placeholder="staff@hospital.com">
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" id="registerPassword" required>
+                            <input type="password" id="staffPassword" placeholder="staff123">
                         </div>
-                        <div class="form-group">
-                            <label>Age</label>
-                            <input type="number" id="registerAge" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Phone Number</label>
-                            <input type="text" id="registerPhone" required>
-                        </div>
-                        <button type="submit" class="btn btn-secondary">Register</button>
+                        <button type="submit" class="btn btn-primary">Login</button>
                     </form>
+                    
                     <div class="auth-link">
-                        Already have an account? <a onclick="showLogin()">Login</a>
+                        <a onclick="showRoleSelection()">← Back to Role Selection</a>
                     </div>
                 </div>
             </div>
 
-            <!-- Dashboard Screen -->
-            <div class="screen dashboard-screen">
+            <!-- Patient Dashboard -->
+            <div class="screen dashboard-screen" id="patientDashboard">
                 <div class="header">
                     <h1>Patient Dashboard</h1>
                     <div>
-                        <span id="userNameDisplay" style="color: #333; font-weight: 600; margin-right: 20px;"></span>
+                        <span id="patientNameDisplay" style="color: #333; font-weight: 600; margin-right: 20px;"></span>
                         <button class="logout-btn" onclick="handleLogout()">Logout</button>
                     </div>
                 </div>
                 <div class="dashboard-content">
-                    <div class="card hospital-card">
-                        <h2>🏥 City Care General Hospital</h2>
-                        <p>📍 123 Healthcare Ave, Medical District</p>
-                        <p>🕒 24/7 Emergency | OPD: 8:00 AM - 8:00 PM</p>
-                        <p>📞 +1 (555) 019-2834</p>
+                    <div class="card">
+                        <h2>📋 Your Medical Information</h2>
+                        <p>Patient ID: <strong id="patientIdDisplay">-</strong></p>
+                        <p>Email: <strong id="patientEmailDisplay">-</strong></p>
+                        <p>Age: <strong id="patientAgeDisplay">-</strong></p>
                     </div>
 
                     <div class="section-title">Quick Actions</div>
                     <div class="action-grid">
                         <button class="action-btn" onclick="openBookAppointmentModal()">📅 Book Appointment</button>
+                        <button class="action-btn" onclick="openMyAppointmentsModal()">📋 My Appointments</button>
                         <button class="action-btn" onclick="openMedicalRecordsModal()">📑 Medical Records</button>
-                        <button class="action-btn" onclick="openPrescriptionsModal()">💊 Prescriptions</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hospital Staff Dashboard -->
+            <div class="screen dashboard-screen" id="staffDashboard">
+                <div class="header">
+                    <h1>Hospital Staff Dashboard</h1>
+                    <div>
+                        <span id="staffNameDisplay" style="color: #333; font-weight: 600; margin-right: 20px;"></span>
+                        <button class="logout-btn" onclick="handleLogout()">Logout</button>
+                    </div>
+                </div>
+                <div class="dashboard-content">
+                    <div class="card">
+                        <h2>🏥 Hospital: City Care General Hospital</h2>
+                        <p>Staff Member: <strong id="staffNameLabelDisplay">-</strong></p>
+                        <p>Email: <strong id="staffEmailLabelDisplay">-</strong></p>
+                        <p>Department: <strong>General</strong></p>
                     </div>
 
-                    <div class="section-title">Upcoming Appointments</div>
-                    <div id="appointmentsList">
-                        <p class="no-data">No appointments yet. Book one to get started!</p>
+                    <div class="section-title">Staff Actions</div>
+                    <div class="action-grid">
+                        <button class="action-btn" onclick="openViewPatientsModal()">👥 View Patients</button>
+                        <button class="action-btn" onclick="openViewAppointmentsModal()">📋 Appointments</button>
+                        <button class="action-btn" onclick="openAddPatientModal()">➕ Add Patient</button>
+                    </div>
+
+                    <div class="section-title">All Appointments</div>
+                    <div id="staffAppointmentsList">
+                        <p class="no-data">No appointments scheduled</p>
                     </div>
                 </div>
             </div>
@@ -527,73 +625,187 @@
         </div>
     </div>
 
+    <!-- My Appointments Modal -->
+    <div id="myAppointmentsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('myAppointmentsModal')">&times;</span>
+            <div class="modal-header">📋 My Appointments</div>
+            <div id="myAppointmentsList">
+                <p class="no-data">No appointments booked yet</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Medical Records Modal -->
     <div id="medicalRecordsModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('medicalRecordsModal')">&times;</span>
             <div class="modal-header">📑 Medical Records</div>
-            <div class="alert alert-info">Your medical records will be displayed here once uploaded by your hospital.</div>
             <div id="medicalRecordsList">
-                <p class="no-data">No medical records available yet.</p>
+                <p class="no-data">No medical records available</p>
             </div>
         </div>
     </div>
 
-    <!-- Prescriptions Modal -->
-    <div id="prescriptionsModal" class="modal">
+    <!-- View Patients Modal -->
+    <div id="viewPatientsModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('prescriptionsModal')">&times;</span>
-            <div class="modal-header">💊 Prescriptions</div>
-            <div class="alert alert-info">Your prescriptions will be displayed here once issued by your doctor.</div>
-            <div id="prescriptionsList">
-                <p class="no-data">No prescriptions available yet.</p>
+            <span class="close-modal" onclick="closeModal('viewPatientsModal')">&times;</span>
+            <div class="modal-header">👥 Registered Patients</div>
+            <div id="patientsList">
+                <p class="no-data">No patients registered</p>
             </div>
+        </div>
+    </div>
+
+    <!-- View Appointments Modal -->
+    <div id="viewAppointmentsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('viewAppointmentsModal')">&times;</span>
+            <div class="modal-header">📋 All Appointments</div>
+            <div id="allAppointmentsList">
+                <p class="no-data">No appointments scheduled</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Patient Modal -->
+    <div id="addPatientModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addPatientModal')">&times;</span>
+            <div class="modal-header">➕ Add New Patient</div>
+            <form id="addPatientForm" onsubmit="submitAddPatient(event)">
+                <div class="form-group">
+                    <label>Patient Name</label>
+                    <input type="text" id="newPatientName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="text" id="newPatientEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="newPatientAge" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" id="newPatientPhone" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Patient</button>
+            </form>
         </div>
     </div>
 
     <script>
         let currentUser = null;
+        let currentRole = null;
         let appointments = [];
+        let patients = [];
 
-        // Quick login with demo account
-        function quickLogin() {
+        // Role Selection
+        function selectRole(role) {
+            currentRole = role;
+            if (role === 'patient') {
+                showScreen('patientLogin');
+            } else if (role === 'staff') {
+                showScreen('staffLogin');
+            }
+        }
+
+        function showRoleSelection() {
+            showScreen('role-selection-screen');
+            currentRole = null;
+            currentUser = null;
+        }
+
+        // Quick Login Functions
+        function quickLoginPatient() {
             currentUser = {
                 name: 'Demo Patient',
-                email: 'demo@patient.com',
-                id: 1
+                email: 'patient@demo.com',
+                id: 1,
+                age: 30
             };
+            currentRole = 'patient';
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
-            showAlert('loginAlert', '✓ Welcome Demo Patient!', 'success');
-            setTimeout(() => showDashboard(), 600);
+            localStorage.setItem('currentRole', 'patient');
+            showAlert('patientLoginAlert', '✓ Login successful!', 'success');
+            setTimeout(() => showPatientDashboard(), 600);
         }
 
-        // Show screens
-        function showScreen(screenClass) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelector('.' + screenClass).classList.add('active');
+        function quickLoginStaff() {
+            currentUser = {
+                name: 'Dr. John Smith',
+                email: 'staff@hospital.com',
+                id: 101,
+                department: 'General'
+            };
+            currentRole = 'staff';
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            localStorage.setItem('currentRole', 'staff');
+            showAlert('staffLoginAlert', '✓ Login successful!', 'success');
+            setTimeout(() => showStaffDashboard(), 600);
         }
 
-        function showLogin() {
-            showScreen('login-screen');
-            document.getElementById('loginForm').reset();
-            document.getElementById('loginAlert').innerHTML = '';
-        }
+        // Handle Logins
+        function handlePatientLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('patientEmail').value.trim();
+            const password = document.getElementById('patientPassword').value.trim();
 
-        function showRegister() {
-            showScreen('register-screen');
-            document.getElementById('registerForm').reset();
-            document.getElementById('registerAlert').innerHTML = '';
-        }
-
-        function showDashboard() {
-            showScreen('dashboard-screen');
-            if (currentUser) {
-                document.getElementById('userNameDisplay').textContent = `Welcome, ${currentUser.name}!`;
+            if (email === 'patient@demo.com' && password === 'patient123') {
+                quickLoginPatient();
+            } else {
+                showAlert('patientLoginAlert', '❌ Invalid email or password', 'error');
             }
-            loadAppointments();
         }
 
-        // Alert helper
+        function handleStaffLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('staffEmail').value.trim();
+            const password = document.getElementById('staffPassword').value.trim();
+
+            if (email === 'staff@hospital.com' && password === 'staff123') {
+                quickLoginStaff();
+            } else {
+                showAlert('staffLoginAlert', '❌ Invalid email or password', 'error');
+            }
+        }
+
+        // Show Screens
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            if (screenId === 'role-selection-screen') {
+                document.querySelector('.role-selection-screen').classList.add('active');
+            } else if (screenId === 'patientLogin') {
+                document.getElementById('patientLogin').classList.add('active');
+            } else if (screenId === 'staffLogin') {
+                document.getElementById('staffLogin').classList.add('active');
+            } else if (screenId === 'patientDashboard') {
+                document.getElementById('patientDashboard').classList.add('active');
+            } else if (screenId === 'staffDashboard') {
+                document.getElementById('staffDashboard').classList.add('active');
+            }
+        }
+
+        function showPatientDashboard() {
+            showScreen('patientDashboard');
+            document.getElementById('patientNameDisplay').textContent = currentUser.name;
+            document.getElementById('patientIdDisplay').textContent = currentUser.id;
+            document.getElementById('patientEmailDisplay').textContent = currentUser.email;
+            document.getElementById('patientAgeDisplay').textContent = currentUser.age;
+            loadPatientAppointments();
+        }
+
+        function showStaffDashboard() {
+            showScreen('staffDashboard');
+            document.getElementById('staffNameDisplay').textContent = currentUser.name;
+            document.getElementById('staffNameLabelDisplay').textContent = currentUser.name;
+            document.getElementById('staffEmailLabelDisplay').textContent = currentUser.email;
+            loadAllAppointments();
+        }
+
+        // Alert Helper
         function showAlert(elementId, message, type = 'info') {
             const alertDiv = document.getElementById(elementId);
             if (alertDiv) {
@@ -604,92 +816,41 @@
             }
         }
 
-        // Handle login
-        function handleLogin(event) {
-            event.preventDefault();
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-
-            // Check demo credentials
-            if (email === 'demo@patient.com' && password === 'demo123') {
-                currentUser = {
-                    name: 'Demo Patient',
-                    email: 'demo@patient.com',
-                    id: 1
-                };
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                showAlert('loginAlert', '✓ Login successful!', 'success');
-                setTimeout(() => showDashboard(), 600);
-                return;
-            }
-
-            // Check custom registered users
-            let users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (users[email] && users[email].password === password) {
-                currentUser = users[email];
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                showAlert('loginAlert', '✓ Login successful!', 'success');
-                setTimeout(() => showDashboard(), 600);
-            } else {
-                showAlert('loginAlert', '❌ Invalid email or password', 'error');
-            }
-        }
-
-        // Handle register
-        function handleRegister(event) {
-            event.preventDefault();
-            const name = document.getElementById('registerName').value.trim();
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value.trim();
-            const age = document.getElementById('registerAge').value;
-            const phone = document.getElementById('registerPhone').value.trim();
-
-            if (email === 'demo@patient.com') {
-                showAlert('registerAlert', '❌ This email is reserved for demo', 'error');
-                return;
-            }
-
-            let users = JSON.parse(localStorage.getItem('users') || '{}');
-            if (users[email]) {
-                showAlert('registerAlert', '❌ Email already registered', 'error');
-                return;
-            }
-
-            users[email] = { name, email, password, age, phone, id: Date.now() };
-            localStorage.setItem('users', JSON.stringify(users));
-            showAlert('registerAlert', '✓ Registration successful! Please login.', 'success');
-            setTimeout(() => showLogin(), 1200);
-        }
-
-        // Handle logout
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('currentUser');
-            showLogin();
-        }
-
-        // Modal functions
+        // Modal Functions
         function openBookAppointmentModal() {
             document.getElementById('bookAppointmentModal').classList.add('active');
+        }
+
+        function openMyAppointmentsModal() {
+            loadPatientAppointments();
+            document.getElementById('myAppointmentsModal').classList.add('active');
         }
 
         function openMedicalRecordsModal() {
             document.getElementById('medicalRecordsModal').classList.add('active');
         }
 
-        function openPrescriptionsModal() {
-            document.getElementById('prescriptionsModal').classList.add('active');
+        function openViewPatientsModal() {
+            loadPatients();
+            document.getElementById('viewPatientsModal').classList.add('active');
+        }
+
+        function openViewAppointmentsModal() {
+            loadAllAppointments();
+            document.getElementById('viewAppointmentsModal').classList.add('active');
+        }
+
+        function openAddPatientModal() {
+            document.getElementById('addPatientModal').classList.add('active');
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
 
-        // Book appointment
+        // Book Appointment
         function submitBookAppointment(event) {
             event.preventDefault();
-            if (!currentUser) return;
-
             const appointment = {
                 id: Date.now(),
                 patientId: currentUser.id,
@@ -697,39 +858,110 @@
                 doctorName: document.getElementById('doctorName').value,
                 date: document.getElementById('appointmentDate').value,
                 time: document.getElementById('appointmentTime').value,
-                status: 'Confirmed'
+                status: 'Pending'
             };
 
             appointments.push(appointment);
             localStorage.setItem('appointments', JSON.stringify(appointments));
-            
-            showAlert('bookAppointmentModal', '✓ Appointment booked successfully!', 'success');
+            showAlert('bookAppointmentModal', '✓ Appointment booked!', 'success');
             document.getElementById('bookAppointmentForm').reset();
             setTimeout(() => {
                 closeModal('bookAppointmentModal');
-                loadAppointments();
+                loadPatientAppointments();
             }, 1200);
         }
 
-        // Load appointments
-        function loadAppointments() {
+        // Load Patient Appointments
+        function loadPatientAppointments() {
             if (!currentUser) return;
-            
             const userAppointments = appointments.filter(a => a.patientId === currentUser.id);
-            const appointmentsList = document.getElementById('appointmentsList');
+            const appointmentsList = document.getElementById('myAppointmentsList');
             
             if (userAppointments.length === 0) {
-                appointmentsList.innerHTML = '<p class="no-data">No upcoming appointments. Book one to get started!</p>';
+                appointmentsList.innerHTML = '<p class="no-data">No appointments booked</p>';
                 return;
             }
 
             appointmentsList.innerHTML = userAppointments.map(appt => `
-                <div class="appointment-card">
+                <div class="info-card">
                     <h3>${appt.doctorName}</h3>
                     <p>📅 ${new Date(appt.date).toDateString()} at ${appt.time}</p>
-                    <p style="color: #4CAF50; font-weight: bold; margin-top: 8px;">✓ Status: ${appt.status}</p>
+                    <p style="color: #4CAF50; font-weight: bold;">✓ Status: ${appt.status}</p>
                 </div>
             `).join('');
+        }
+
+        // Load All Appointments
+        function loadAllAppointments() {
+            const appointmentsList = document.getElementById('staffAppointmentsList');
+            const allAppointmentsList = document.getElementById('allAppointmentsList');
+            
+            if (appointments.length === 0) {
+                appointmentsList.innerHTML = '<p class="no-data">No appointments</p>';
+                if (allAppointmentsList) {
+                    allAppointmentsList.innerHTML = '<p class="no-data">No appointments</p>';
+                }
+                return;
+            }
+
+            const html = appointments.map(appt => `
+                <div class="info-card">
+                    <h3>${appt.patientName} → ${appt.doctorName}</h3>
+                    <p>📅 ${new Date(appt.date).toDateString()} at ${appt.time}</p>
+                    <p style="color: #4CAF50; font-weight: bold;">✓ Status: ${appt.status}</p>
+                </div>
+            `).join('');
+
+            appointmentsList.innerHTML = html;
+            if (allAppointmentsList) {
+                allAppointmentsList.innerHTML = html;
+            }
+        }
+
+        // Load Patients
+        function loadPatients() {
+            const patientsList = document.getElementById('patientsList');
+            
+            if (patients.length === 0) {
+                patientsList.innerHTML = '<p class="no-data">No patients registered</p>';
+                return;
+            }
+
+            patientsList.innerHTML = patients.map(p => `
+                <div class="info-card">
+                    <h3>${p.name}</h3>
+                    <p>Email: ${p.email}</p>
+                    <p>Age: ${p.age}</p>
+                    <p>Phone: ${p.phone}</p>
+                </div>
+            `).join('');
+        }
+
+        // Add Patient
+        function submitAddPatient(event) {
+            event.preventDefault();
+            const patient = {
+                id: Date.now(),
+                name: document.getElementById('newPatientName').value,
+                email: document.getElementById('newPatientEmail').value,
+                age: document.getElementById('newPatientAge').value,
+                phone: document.getElementById('newPatientPhone').value
+            };
+
+            patients.push(patient);
+            localStorage.setItem('patients', JSON.stringify(patients));
+            showAlert('addPatientModal', '✓ Patient added!', 'success');
+            document.getElementById('addPatientForm').reset();
+            setTimeout(() => closeModal('addPatientModal'), 1200);
+        }
+
+        // Logout
+        function handleLogout() {
+            currentUser = null;
+            currentRole = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentRole');
+            showRoleSelection();
         }
 
         // Close modal on outside click
@@ -740,13 +972,24 @@
             }
         }
 
-        // Load previous session if exists
+        // Initialize on load
         window.addEventListener('load', function() {
             let storedUser = localStorage.getItem('currentUser');
-            if (storedUser) {
+            let storedRole = localStorage.getItem('currentRole');
+            let storedAppointments = localStorage.getItem('appointments');
+            let storedPatients = localStorage.getItem('patients');
+
+            if (storedAppointments) appointments = JSON.parse(storedAppointments);
+            if (storedPatients) patients = JSON.parse(storedPatients);
+
+            if (storedUser && storedRole) {
                 currentUser = JSON.parse(storedUser);
-                appointments = JSON.parse(localStorage.getItem('appointments') || '[]');
-                showDashboard();
+                currentRole = storedRole;
+                if (currentRole === 'patient') {
+                    showPatientDashboard();
+                } else if (currentRole === 'staff') {
+                    showStaffDashboard();
+                }
             }
         });
     </script>
